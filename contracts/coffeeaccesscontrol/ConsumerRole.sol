@@ -5,44 +5,53 @@ import "./Roles.sol";
 
 // Define a contract 'ConsumerRole' to manage this role - add, remove, check
 contract ConsumerRole {
+    uint consumerCount; // Initializing the count for consumers
 
-  // Define 2 events, one for Adding, and other for Removing
+    // Define 2 events, one for Adding, and the other for Removing
+    event AddConsumer(address indexed consumer);
+    event RemoveConsumer(address indexed account);
 
-  // Define a struct 'consumers' by inheriting from 'Roles' library, struct Role
+    using Roles for Roles.Role; // Importing Roles library
 
-  // In the constructor make the address that deploys this contract the 1st consumer
-  constructor() public {
-    
-  }
+    Roles.Role private consumers; // Using Roles.Role struct for creating consumers
 
-  // Define a modifier that checks to see if msg.sender has the appropriate role
-  modifier onlyConsumer() {
-    
-    _;
-  }
+    // In the constructor, make the address that deploys this contract the 1st consumer
+    constructor() public {
+        _addConsumer(msg.sender);
+        consumerCount;
+    }
 
-  // Define a function 'isConsumer' to check this role
-  function isConsumer(address account) public view returns (bool) {
-    
-  }
+    // Define a modifier that checks to see if msg.sender has the appropriate role
+    modifier onlyConsumer() {
+        require(isConsumer(msg.sender), "Not a consumer");
+        _;
+    }
 
-  // Define a function 'addConsumer' that adds this role
-  function addConsumer(address account) public onlyConsumer {
-    
-  }
+    // Define a function 'isConsumer' to check this role
+    function isConsumer(address account) public view returns (bool) {
+        return consumers.has(account);
+    }
 
-  // Define a function 'renounceConsumer' to renounce this role
-  function renounceConsumer() public {
-    
-  }
+    // Define a function 'addConsumer' that adds this role
+    function addConsumer(address account) public onlyConsumer {
+        _addConsumer(account);
+    }
 
-  // Define an internal function '_addConsumer' to add this role, called by 'addConsumer'
-  function _addConsumer(address account) internal {
-    
-  }
+    // Define a function 'renounceConsumer' to renounce this role
+    function renounceConsumer() public onlyConsumer {
+        _removeConsumer(msg.sender);
+    }
 
-  // Define an internal function '_removeConsumer' to remove this role, called by 'removeConsumer'
-  function _removeConsumer(address account) internal {
-    
-  }
+    // Define an internal function '_addConsumer' to add this role, called by 'addConsumer'
+    function _addConsumer(address account) internal {
+        consumers.add(account);
+        consumerCount++;
+        emit AddConsumer(account);
+    }
+
+    // Define an internal function '_removeConsumer' to remove this role, called by 'removeConsumer'
+    function _removeConsumer(address account) internal {
+        consumers.remove(account);
+        emit RemoveConsumer(account);
+    }
 }
