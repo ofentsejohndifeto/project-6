@@ -1,6 +1,12 @@
 pragma solidity ^0.4.24;
+
+import "../coffeeaccesscontrol/ConsumerRole.sol";
+import "../coffeeaccesscontrol/DistributorRole.sol";
+import "../coffeeaccesscontrol/RetailerRole.sol";
+import "../coffeeaccesscontrol/FarmerRole.sol";
+
 // Define a contract 'Supplychain'
-contract SupplyChain {
+contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole {
 
   // Define 'owner'
   address owner;
@@ -84,7 +90,7 @@ contract SupplyChain {
   modifier checkValue(uint _upc) {
     uint _price = items[_upc].productPrice;
     uint amountToReturn = msg.value - _price;
-    items[_upc].consumerID.transfer(amountToReturn);
+    items[_upc].distributorID.transfer(amountToReturn);
     _;
   }
 
@@ -236,6 +242,7 @@ contract SupplyChain {
       items[_upc].originFarmerID.transfer(price);
 
     // Emit the appropriate event
+    
       emit Sold(_upc);
   }
 
@@ -288,45 +295,44 @@ contract SupplyChain {
 
   // Define a function 'fetchItemBufferOne' that fetches the data
     function fetchItemBufferOne(uint _upc) public view returns 
-    (
-    uint    itemSKU,
-    uint    itemUPC,
-    address ownerID,
-    address originFarmerID,
-    string  originFarmName,
-    string  originFarmInformation,
-    string  originFarmLatitude,
-    string  originFarmLongitude
-    ) 
-  {
+(
+  uint    itemSKU,
+  uint    itemUPC,
+  address ownerID,
+  address originFarmerID,
+  string  originFarmName,
+  string  originFarmInformation,
+  string  originFarmLatitude,
+  string  originFarmLongitude
+) 
+{
   // Retrieve the item from the mapping using the UPC
-    Item storage currentItem = items[_upc];
+  Item storage currentItem = items[_upc];
 
   // Assign values to the 8 parameters
-    itemSKU = currentItem.sku;
-    itemUPC = currentItem.upc;
-    ownerID = currentItem.ownerID;
-    originFarmerID = currentItem.originFarmerID;
-    originFarmName = currentItem.originFarmName;
-    originFarmInformation = currentItem.originFarmInformation;
-    originFarmLatitude = currentItem.originFarmLatitude;
-    originFarmLongitude = currentItem.originFarmLongitude;
-  
-    return 
-    (
-      itemSKU,
-      itemUPC,
-      ownerID,
-      originFarmerID,
-      originFarmName,
-      originFarmInformation,
-      originFarmLatitude,
-      originFarmLongitude
-    );
-  }
+  itemSKU = currentItem.sku;
+  itemUPC = currentItem.upc;
+  ownerID = currentItem.ownerID;
+  originFarmerID = currentItem.originFarmerID;
+  originFarmName = currentItem.originFarmName;
+  originFarmInformation = currentItem.originFarmInformation;
+  originFarmLatitude = currentItem.originFarmLatitude;
+  originFarmLongitude = currentItem.originFarmLongitude;
+
+  return (
+    itemSKU,
+    itemUPC,
+    ownerID,
+    originFarmerID,
+    originFarmName,
+    originFarmInformation,
+    originFarmLatitude,
+    originFarmLongitude
+  );
+}
 
   // Define a function 'fetchItemBufferTwo' that fetches the data
-  function fetchItemBufferTwo(uint _upc) public view received(_upc) returns 
+  function fetchItemBufferTwo(uint _upc) public view returns 
 (
   uint    itemSKU,
   uint    itemUPC,
@@ -339,22 +345,20 @@ contract SupplyChain {
   address consumerID
 ) 
 {
-  // Retrieve the item from the mapping using the given UPC
   Item storage currentItem = items[_upc];
 
   // Assign values to the 9 parameters
   itemSKU = currentItem.sku;
   itemUPC = currentItem.upc;
-  productID = currentItem.productID; // Add this line to fix the error
-  productNotes = currentItem.productNotes; // Add this line to fix the error
-  productPrice = currentItem.productPrice; // Add this line to fix the error
+  productID = currentItem.productID;
+  productNotes = currentItem.productNotes;
+  productPrice = currentItem.productPrice;
   itemState = uint(currentItem.itemState); // Convert enum to uint
-  distributorID = currentItem.distributorID; // Add this line to fix the error
-  retailerID = currentItem.retailerID; // Add this line to fix the error
-  consumerID = currentItem.consumerID; // Add this line to fix the error
-  
-  return 
-  (
+  distributorID = currentItem.distributorID;
+  retailerID = currentItem.retailerID;
+  consumerID = currentItem.consumerID;
+
+  return (
     itemSKU,
     itemUPC,
     productID,
@@ -366,4 +370,6 @@ contract SupplyChain {
     consumerID
   );
 }
+
 }
+
