@@ -210,7 +210,7 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole 
         emit Packed(_upc);
   }
 
-
+  // Define a function 'sellItem' that allows a farmer to mark an item 'ForSale'
   function sellItem(uint _upc, uint _price) public 
       packed(_upc) //modifer to check if packed
       verifyCaller(items[_upc].ownerID) //verifying caller
@@ -228,23 +228,24 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole 
   // Use the above defined modifiers to check if the item is available for sale, if the buyer has paid enough, 
   // and any excess ether sent is refunded back to the buyer
   function buyItem(uint _upc) public payable 
-    forSale(_upc) //check if item is for sale
-    paidEnough(items[_upc].productPrice) //did buyer pay enough modifier
-    checkValue(_upc) //
-  {
+    forSale(_upc) // Check if item is for sale
+    paidEnough(items[_upc].productPrice) // Did buyer pay enough modifier
+    checkValue(_upc) // Check value modifier
+{
     // Update the appropriate fields - ownerID, distributorID, itemState
-      items[_upc].ownerID = msg.sender;
-      items[_upc].distributorID = msg.sender;
-      items[_upc].itemState = State.Sold;
+    items[_upc].distributorID = msg.sender;
+    items[_upc].ownerID = items[_upc].distributorID; // Change owner to distributor
+    items[_upc].itemState = State.Sold;
 
     // Transfer money to farmer
-      uint price = items[_upc].productPrice;
-      items[_upc].originFarmerID.transfer(price);
+    uint price = items[_upc].productPrice;
+    items[_upc].originFarmerID.transfer(price);
 
     // Emit the appropriate event
-    
-      emit Sold(_upc);
-  }
+    emit Sold(_upc);
+}
+
+
 
   // Define a function 'shipItem' that allows the distributor to mark an item 'Shipped'
   // Use the above modifers to check if the item is sold
@@ -265,11 +266,11 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole 
   
   function receiveItem(uint _upc) public 
       shipped(_upc)
-      verifyCaller(items[_upc].retailerID)
+      onlyRetailer() // imported library from DistributorRole.sol
   {
     // Update the appropriate fields - ownerID, retailerID, itemState
-      items[_upc].ownerID = msg.sender;
       items[_upc].retailerID = msg.sender;
+      items[_upc].ownerID = items[_upc].retailerID; // Change owner to distributor
       items[_upc].itemState = State.Received;
     
     // Emit the appropriate event
@@ -281,7 +282,7 @@ contract SupplyChain is FarmerRole, ConsumerRole, RetailerRole, DistributorRole 
 // Use the above modifiers to check if the item is received
   function purchaseItem(uint _upc) public 
       received(_upc)
-      verifyCaller(items[_upc].consumerID)
+      onlyConsumer() // imported library from ConsumerRole.sol
   {
     // Update the appropriate fields - ownerID, consumerID, itemState
       items[_upc].ownerID = msg.sender;
