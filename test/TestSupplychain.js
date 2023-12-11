@@ -323,6 +323,7 @@ it("Testing smart contract function shipItem() that allows a distributor to ship
 
     // Add the retailer to the list
     await supplyChain.addRetailer(retailerID, { from: ownerID });
+    
 
     // Mark an item as Shipped by calling function shipItem()
     const result = await supplyChain.receiveItem(upc, { from: retailerID });
@@ -368,6 +369,9 @@ it("Testing smart contract function shipItem() that allows a distributor to ship
     // Retrieve the initial item state
     const initialItemState = await supplyChain.fetchItemBufferTwo.call(upc);
     assert.equal(initialItemState[5].toNumber(), 6, 'Error: Item should be in bought state initially');
+
+    // Add the distributor to the list
+    await supplyChain.addConsumer(consumerID, { from: ownerID })
 
     // Mark an item as Shipped by calling function shipItem()
     const result = await supplyChain.purchaseItem(upc, { from: consumerID });

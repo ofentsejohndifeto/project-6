@@ -2811,10 +2811,16 @@
       "links": {},
       "address": "0x79051A2faFcC216A55d3897474012145d158F170",
       "transactionHash": "0x263bdf0002a9f020ec75cf8c9307904a00df28ea611024b5f4cf01e3d710bd1a"
+    },
+    "1702290073049": {
+      "events": {},
+      "links": {},
+      "address": "0x79051A2faFcC216A55d3897474012145d158F170",
+      "transactionHash": "0x263bdf0002a9f020ec75cf8c9307904a00df28ea611024b5f4cf01e3d710bd1a"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2023-12-10T15:55:44.523Z",
+  "updatedAt": "2023-12-11T10:21:25.953Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}
