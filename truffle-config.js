@@ -1,7 +1,7 @@
 const key = require('./metamaskKey');
 const mnemonic = key;
 
-const HDWalletProvider = require('truffle-hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
   networks: {
@@ -11,7 +11,7 @@ module.exports = {
       network_id: "*" // Match any network id
     },
     goerli: {
-      provider: () => new HDWalletProvider(mnemonic, `https://goerli.infura.io/v3/96e2c766f4ad40a3b47fe9e9400b2678`),
+      provider: () => new HDWalletProvider(mnemonic, `https://goerli.infura.io/v3/be6d84273fcf4243b0c0151f9ba25469`),
       network_id: 5,       // Ropsten's id
       gas: 5500000,        // Ropsten has a lower block limit than mainnet
       confirmations: 0,    // # of confs to wait between deployments. (default: 0)
